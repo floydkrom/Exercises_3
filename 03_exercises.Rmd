@@ -63,13 +63,13 @@ garden_harvest %>%
 
 ```{r}
 garden_summary <- garden_harvest %>%
-  group_by(variety, date) %>%
+  group_by(vegetable, variety, date) %>%
   mutate(wt_lbs = weight*0.00220462) %>%
   summarize(daily_wt_lbs = sum(wt_lbs))
   
   garden_summary %>%
   left_join(plant_date_loc,
-            by = "variety")
+            by = c("vegetable", "variety"))
 ```
 
 
@@ -100,7 +100,7 @@ garden_harvest %>%
   mutate(variety_lower = str_to_lower(variety)) %>%
   mutate(variety_length = str_length(variety)) %>%
   mutate(variety2 = fct_infreq(variety)) %>%
-  distinct(variety, .keep_all = TRUE) %>%
+  distinct(vegetable, variety, .keep_all = TRUE) %>%
   arrange(vegetable, variety_length) 
 ```
 
@@ -155,19 +155,35 @@ Trips %>%
   8. A density plot of the events versus time of day.  You can use `mutate()` with `lubridate`'s  `hour()` and `minute()` functions to extract the hour of the day and minute within the hour from `sdate`. Hint: A minute is 1/60 of an hour, so create a variable where 3:30 is 3.5 and 3:45 is 3.75.
   
 ```{r}
-
+Trips %>%
+  mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
+    ggplot(aes(x = time_of_day)) +
+    geom_density()
 ```
-  
   9. A bar graph of the events versus day of the week. Put day on the y-axis.
   
 ```{r}
-
+Trips %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+  ggplot(aes(y = days_of_week)) +
+  geom_bar() +
+  labs(title = "Event Versus Day of the Week",
+       x = "Count",
+       y = "Day of the Week")
 ```
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
 ```{r}
-
+Trips %>%
+  mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+    ggplot(aes(x = time_of_day)) +
+    geom_density() +
+    facet_wrap(~days_of_week) +
+    labs(title = "Event Versus Time and Day of the Week",
+       x = "Time of The Day",
+       y = "Density")
 ```
   
 The variable `client` describes whether the renter is a regular user (level `Registered`) or has not joined the bike-rental organization (`Causal`). The next set of exercises investigate whether these two different categories of users show different rental behavior and how `client` interacts with the patterns you found in the previous exercises. Repeat the graphic from Exercise \@ref(exr:exr-temp) (d) with the following changes:
