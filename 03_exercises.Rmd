@@ -71,7 +71,7 @@ garden_summary <- garden_harvest %>%
   left_join(plant_date_loc,
             by = c("vegetable", "variety"))
 ```
-
+As shown above, there is a replication of certain vegetables and varieties. For example, in row 17 and 18, the beans(Bush Bush Slender variety) harvested on 2020-07-06 are reported as harvested in both plot M and D. However, in reality these vegetables and variaties have not been harvest twice. When Lisa collected her data, she didn't report the plot where she harvest from. Therefore, there is a replication of certain vegetables and varieties reported while that isn't accurate. This could be fixed if Lisa would report the plot in which each vegetable and variety is harvested. 
 
   3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `supply_cost` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.
   
@@ -191,25 +191,59 @@ The variable `client` describes whether the renter is a regular user (level `Reg
   11. Change the graph from exercise 10 to set the `fill` aesthetic for `geom_density()` to the `client` variable. You should also set `alpha = .5` for transparency and `color=NA` to suppress the outline of the density function.
   
 ```{r}
-
+Trips %>%
+  mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+    ggplot(aes(x = time_of_day, fill=client, color="NA", alpha = 0.5)) +
+    geom_density() +
+    facet_wrap(~days_of_week) +
+    labs(title = "Event Versus Time and Day of the Week",
+       x = "Time of The Day",
+       y = "Density")
 ```
 
   12. Change the previous graph by adding the argument `position = position_stack()` to `geom_density()`. In your opinion, is this better or worse in terms of telling a story? What are the advantages/disadvantages of each?
   
 ```{r}
-
+Trips %>%
+  mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+    ggplot(aes(x = time_of_day, fill=client, color="NA", alpha = 0.5)) +
+    geom_density(position = position_stack()) +
+    facet_wrap(~days_of_week) +
+    labs(title = "Event Versus Time and Day of the Week",
+       x = "Time of The Day",
+       y = "Density")
 ```
   
   13. Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
 ```{r}
-
+Trips %>%
+  mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+  mutate(weekend = ifelse(days_of_week %in% c("Sat", "Sun"), "Weekend", "Weekday")) %>%
+    ggplot(aes(x = time_of_day, fill=client, color="NA", alpha = 0.5)) +
+    geom_density(position = position_stack()) +
+    facet_wrap(~weekend) +
+    labs(title = "Different Client Usage",
+       x = "Time of The Day",
+       y = "Density")
 ```
   
   14. Change the graph from the previous problem to facet on `client` and fill with `weekday`. What information does this graph tell you that the previous didn't? Is one graph better than the other?
   
 ```{r}
-
+Trips %>%
+  mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+  mutate(weekend = ifelse(days_of_week %in% c("Sat", "Sun"), "Weekend", "Weekday")) %>%
+    ggplot(aes(x = time_of_day, fill=days_of_week, color="NA", alpha = 0.5)) +
+    geom_density(position = position_stack()) +
+    facet_wrap(~client) +
+    labs(title = "Different Client Usage",
+       x = "Time of The Day",
+       y = "Density")
 ```
   
 ### Spatial patterns
