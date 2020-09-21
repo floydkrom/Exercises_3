@@ -179,7 +179,7 @@ Trips %>%
        x = "Count",
        y = "Day of the Week")
 ```
-  As shown in the bar graph above, 
+  As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals rent these bikes to go from point A to point B during the workweek and therefore don't use a bike on the weekends.
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
@@ -194,6 +194,7 @@ Trips %>%
        x = "Time of Day",
        y = "Density")
 ```
+  There is a clear pattern during the weekdays as well as during the weekends. During the weekdays, there are peaks in the bike rentals during the early morning period before work regular work hours start and in the afternoon after regular work hours have ended. Furthermore, both Saturday and Sunday have extremely similar patterns as most people use these bikes during the day (peak at 3pm) instead of during the early morning and late afternoon. 
   
 The variable `client` describes whether the renter is a regular user (level `Registered`) or has not joined the bike-rental organization (`Causal`). The next set of exercises investigate whether these two different categories of users show different rental behavior and how `client` interacts with the patterns you found in the previous exercises. Repeat the graphic from Exercise \@ref(exr:exr-temp) (d) with the following changes:
 
@@ -247,7 +248,7 @@ Trips %>%
   mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
   mutate(days_of_week = wday(sdate, label = TRUE)) %>%
   mutate(weekend = ifelse(days_of_week %in% c("Sat", "Sun"), "Weekend", "Weekday")) %>%
-    ggplot(aes(x = time_of_day, fill=days_of_week, color="NA", alpha = 0.5)) +
+    ggplot(aes(x = time_of_day, fill=days_of_week), color="NA", alpha = 0.5) +
     geom_density(position = position_stack()) +
     facet_wrap(~client) +
     labs(title = "Different Client Usage",
