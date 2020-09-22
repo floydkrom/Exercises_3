@@ -203,7 +203,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
-  In the density plot above, we observe that the bikes are rented more often during October and November than in December and January. This can be explained by the transition from spring weather into winter weather. 
+  
+In the density plot above, we observe that the bikes are rented more often during October and November than in December and January. This can be explained by the transition from spring weather into winter weather. 
 
   8. A density plot of the events versus time of day.  You can use `mutate()` with `lubridate`'s  `hour()` and `minute()` functions to extract the hour of the day and minute within the hour from `sdate`. Hint: A minute is 1/60 of an hour, so create a variable where 3:30 is 3.5 and 3:45 is 3.75.
   
@@ -219,7 +220,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-   In the density plot above, we observe the time of the day that bikes are rented out. As shown, bikes are rented out more often during two specific time periods of the day: early morning between 7am and 8am and in the afternoon between 5pm and 6pm. This can be explained by the fact that people use bikes during this time period to go to work in the morning and to go home in the afternoon. This is at the same time as the typical rush hour in public transportation.
+   
+In the density plot above, we observe the time of the day that bikes are rented out. As shown, bikes are rented out more often during two specific time periods of the day: early morning between 7am and 8am and in the afternoon between 5pm and 6pm. This can be explained by the fact that people use bikes during this time period to go to work in the morning and to go home in the afternoon. This is at the same time as the typical rush hour in public transportation.
    
   9. A bar graph of the events versus day of the week. Put day on the y-axis.
   
@@ -235,7 +237,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
-  As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals rent out these bikes to go from point A to point B during the workweek while they are off on the weekends and therefore don't need to rent out a bike. 
+
+As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals rent out these bikes to go from point A to point B during the workweek while they are off on the weekends and therefore don't need to rent out a bike. 
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
@@ -290,7 +293,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
-  I don't believe that one plot is better or worse than the other in telling the story because both plots provide different information. In the first plot, we are able to compare the distributions for both registered and casual clients. Furthermore, we are also able to observe how both clients differ in renting out a bike at different times. In the second plot, we are able to show what proportion of the rides is represented by the different type of client. For example, we are able to tell from the second plot that it's mainly registered clients that rent out bikes on Saturday morning, while we are unable to easily observe this in the first plot.
+
+I don't believe that one plot is better or worse than the other in telling the story because both plots provide different information. In the first plot, we are able to compare the distributions for both registered and casual clients. Furthermore, we are also able to observe how both clients differ in renting out a bike at different times. In the second plot, we are able to show what proportion of the rides is represented by the different type of client. For example, we are able to tell from the second plot that it's mainly registered clients that rent out bikes on Saturday morning, while we are unable to easily observe this in the first plot.
   
   13. Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
@@ -327,7 +331,8 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
-  The graph above tells us more specific information about each day of the week which allows us to determine which day shave the most casual and registered users respectively. I do not believe that one graph is better than the other, they both give different information that is useful to answer different questions. 
+
+The graph above tells us more specific information about each day of the week which allows us to determine which day shave the most casual and registered users respectively. I do not believe that one graph is better than the other, they both give different information that is useful to answer different questions. 
   
 ### Spatial patterns
 
@@ -366,7 +371,8 @@ Stations %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
- There are many stations along the 38.9 latitude, which could be explained by the fact that this is a downtown area in the middle of a city, with metro and train stations located in this area. Furthermore, there seems to be a diagonal street from left top to bottom right with the amount of stations that fit into that pattern. Lastly, there seems to be a high percentage of casual riders at certain stations along the -77.05 longitude. Once again, this is possibly the center of the downtown area where casual riders rent out their bikes.
+
+There are many stations along the 38.9 latitude, which could be explained by the fact that this is a downtown area in the middle of a city, with metro and train stations located in this area. Furthermore, there seems to be a diagonal street from left top to bottom right with the amount of stations that fit into that pattern. Lastly, there seems to be a high percentage of casual riders at certain stations along the -77.05 longitude. Once again, this is possibly the center of the downtown area where casual riders rent out their bikes.
 
 ### Spatiotemporal patterns
 
@@ -433,6 +439,8 @@ From the table above, we are able to conclude that at the ten station-date combi
 ## GitHub link
 
   20. Below, provide a link to your GitHub page with this set of Weekly Exercises. Specifically, if the name of the file is 03_exercises.Rmd, provide a link to the 03_exercises.md file, which is the one that will be most readable on GitHub.
+  
+[here](https://github.com/floydkrom/Exercises_3/blob/master/03_exercises.md).
 
 ## Challenge problem! 
 
