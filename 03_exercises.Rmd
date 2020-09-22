@@ -52,7 +52,7 @@ These exercises will reiterate what you learned in the "Expanding the data wrang
 ```{r}
 garden_harvest %>%
   mutate(week_day = wday(date, label = TRUE)) %>%
-  group_by(vegetable, week_day) %>%
+  group_by(week_day,vegetable) %>%
   mutate(wt_lbs = weight*0.00220462) %>%
   summarize(daily_wt_lbs = sum(wt_lbs)) %>%
   pivot_wider(id_cols = vegetable,
@@ -77,7 +77,7 @@ As shown above, there is a replication of certain vegetables and varieties. For 
 
   3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `supply_cost` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.
   
-   We would first need to add a variable to the dataset `garden_harvest` that prices the seed mix that is used, we could name this variable: `variety_price`. After creating the variable, we can use a left join by vegetable and select only the price of that vegetable and multiply that by the vegetable's weight in pounds. Next, we could left join `garden_harvest` and `supply_costs` by variety. Finally, we could create a variable called money_saved which would subtract the price of the seed from the `price_with_tax` variable.
+ NEED AN ANSWER IN HERE
 
   4. Subset the data to tomatoes. Reorder the tomato varieties from smallest to largest first harvest date. Create a barplot of total harvest in pounds for each variety, in the new order.
 
@@ -107,8 +107,8 @@ garden_harvest %>%
 
 ```{r}
 garden_harvest %>%
-  mutate(has_r = str_detect(variety, "er | ar")) %>%
-  distinct(variety, has_r = TRUE)
+  mutate(has_r = str_detect(variety, "er") | str_detect(variety, "ar")) %>%
+  distinct(variety, has_r)
 ```
 
 ## Bicycle-Use Patterns
@@ -166,7 +166,7 @@ Trips %>%
        x = "Time of Day",
        y = "Density")
 ```
-   In the density plot above, we observe the time of the day that bikes are rented out. As shown, bikes are rented out more often during two specific time periods of the day: early morning between 7am and 8am and in the afternoon between 5pm and 6pm. This can be explained by the fact that people use bikes during this time period to go to work in the morning and to go home in the afternoon. It's the typical rush hour for public transportation.
+   In the density plot above, we observe the time of the day that bikes are rented out. As shown, bikes are rented out more often during two specific time periods of the day: early morning between 7am and 8am and in the afternoon between 5pm and 6pm. This can be explained by the fact that people use bikes during this time period to go to work in the morning and to go home in the afternoon. This is at the same time as the typical rush hour in public transportation.
    
   9. A bar graph of the events versus day of the week. Put day on the y-axis.
   
@@ -179,7 +179,7 @@ Trips %>%
        x = "Count",
        y = "Day of the Week")
 ```
-  As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals rent these bikes to go from point A to point B during the workweek and therefore don't use a bike on the weekends.
+  As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals ren out these bikes to go from point A to point B during the workweek while they are off on the weekends and therefore don't need to rent out a bike. 
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
@@ -194,7 +194,7 @@ Trips %>%
        x = "Time of Day",
        y = "Density")
 ```
-  There is a clear pattern during the weekdays as well as during the weekends. During the weekdays, there are peaks in the bike rentals during the early morning period before work regular work hours start and in the afternoon after regular work hours have ended. Furthermore, both Saturday and Sunday have extremely similar patterns as most people use these bikes during the day (peak at 3pm) instead of during the early morning and late afternoon. 
+  There is a clear pattern during the weekdays as well as during the weekends. During the weekdays, there are peaks in the bike rentals during the early morning period before regular work hours start and in the afternoon after regular work hours have ended. Furthermore, both Saturday and Sunday have extremely similar patterns as most people use these bikes during the day (peak at 3pm) instead of during the early morning and/or late afternoon. 
   
 The variable `client` describes whether the renter is a regular user (level `Registered`) or has not joined the bike-rental organization (`Causal`). The next set of exercises investigate whether these two different categories of users show different rental behavior and how `client` interacts with the patterns you found in the previous exercises. Repeat the graphic from Exercise \@ref(exr:exr-temp) (d) with the following changes:
 
@@ -225,6 +225,7 @@ Trips %>%
        x = "Time of Day",
        y = "Density")
 ```
+  I believe that geom_density() is better visualization than the geom_density(position = position_stack()) because from the graphs with position = position_stack()) we are unable to determine when each client type are more likely to rent out the bikes independently from each other. 
   
   13. Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
@@ -255,6 +256,7 @@ Trips %>%
        x = "Time of The Day",
        y = "Density")
 ```
+  The graph above tells us more specific information about the days of the week and how 
   
 ### Spatial patterns
 
