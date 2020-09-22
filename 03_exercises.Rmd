@@ -1,11 +1,13 @@
 ---
 title: 'Weekly Exercises #3'
 author: "Floyd Krom"
+Collaborated with: "Matt Hegarty"
 output: 
   html_document:
     keep_md: TRUE
     toc: TRUE
     toc_float: TRUE
+    theme: journal
     df_print: paged
     code_download: true
 ---
@@ -76,20 +78,29 @@ garden_summary <- garden_harvest %>%
 As shown above, there is a replication of certain vegetables and varieties. For example, in row 17 and 18, the beans(Bush Bush Slender variety) harvested on 2020-07-06 are reported as harvested in both plot M and D. However, in reality these vegetables and variaties have not been harvest twice. When Lisa collected her data, she didn't report the plot where she harvest from. Therefore, there is a replication of certain vegetables and varieties reported while that isn't accurate. This could be fixed if Lisa would report the plot in which each vegetable and variety is harvested. 
 
   3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `supply_cost` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.
-  
- NEED AN ANSWER IN HERE
+ 
+ With the information provided on the Whole Foods Market website, we will be able to create a new dataset that shows the price of each vegetable, we will call this data set `Whole_Foods`. This will allow us to then join the `Whole_Foods` dataset with the `supply_costs` dataset, in order to show the vegetable and price. The Whole Foods Market website only shows prices for its vegetables without tax, I would therefore only use the variable `price` in the `supply_costs` dataset which does not account for tax to create a fair comparison.
+ 
+ supply_costs %>%
+  left_join(Whole_Foods,
+            by = c("vegetable")
 
   4. Subset the data to tomatoes. Reorder the tomato varieties from smallest to largest first harvest date. Create a barplot of total harvest in pounds for each variety, in the new order.
 
 ```{r}
-garden_harvest %>%
-  filter(vegetable %in% c("tomatoes")) %>%
-  mutate(wt_lbs = weight*0.00220462) %>%
-    ggplot(aes(y = fct_infreq(variety))) +
-    geom_bar() +
-      labs(title = "Tomatoe Variety",
-              x = "Count",
-              y = "Variety") 
+garden_harvest %>% 
+  filter(vegetable == "tomatoes") %>%
+  group_by(variety) %>% 
+  summarize(first_harvest_date = min(date), total_harvest_lbs = sum(weight) * 0.00220462) %>%
+  arrange(first_harvest_date) -> ordered_by_date 
+ordered_by_date
+
+ordered_by_date %>%
+  ggplot(aes(y = fct_relevel(variety, "grape", "Big Beef", "Bonny Best", "Better Boy", "Cherokee Purple", "Amish Paste", "Mortgage Lifter", "Jet Star", "Old German", "Black Krim", "Brandywine", "volunteers"), x = total_harvest_lbs)) +
+  geom_col(fill = "darkred") +
+          labs(title = "Total Harvest Weight of Different Tomato Varieties (Ordered by First Harvest   Date)", 
+          x = "Total Harvest Weight (lbs)", 
+          y = "Variety")
 ```
 
   5. In the `garden_harvest` data, create two new variables: one that makes the varieties lowercase and another that finds the length of the variety name. Arrange the data by vegetable and length of variety name (smallest to largest), with one row for each vegetable variety. HINT: use `str_to_lower()`, `str_length()`, and `distinct()`.
@@ -204,8 +215,8 @@ The variable `client` describes whether the renter is a regular user (level `Reg
 Trips %>%
   mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
   mutate(days_of_week = wday(sdate, label = TRUE)) %>%
-    ggplot(aes(x = time_of_day, fill=client), color="NA", alpha = 0.5) +
-    geom_density() +
+    ggplot(aes(x = time_of_day, fill=client)) +
+    geom_density(color="NA", alpha = 0.5) +
     facet_wrap(~days_of_week) +
     labs(title = "Event Versus Time and Day of the Week",
        x = "Time of Day",
@@ -218,14 +229,17 @@ Trips %>%
 Trips %>%
   mutate(time_of_day = hour(sdate) + (minute(sdate)/60)) %>%
   mutate(days_of_week = wday(sdate, label = TRUE)) %>%
-    ggplot(aes(x = time_of_day, fill=client), color="NA", alpha = 0.5) +
-    geom_density(position = position_stack()) +
+    ggplot(aes(x = time_of_day, fill=client)) +
+    geom_density(color="NA", alpha = 0.5, position = position_stack()) +
     facet_wrap(~days_of_week) +
     labs(title = "Event Versus Time and Day of the Week",
        x = "Time of Day",
        y = "Density")
 ```
   I believe that geom_density() is better visualization than the geom_density(position = position_stack()) because from the graphs with position = position_stack()) we are unable to determine when each client type are more likely to rent out the bikes independently from each other. 
+  
+  First plot, we are able to compare the distributions to each other. How did the times they ride differ. 
+  Second plot, we are able to show what proportion of the rides does each category represent. Saturday early morning, we are able to tell from the second plot that it's mainly registered riders, while we are unable to tell this from the first plot.
   
   13. Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
@@ -256,7 +270,7 @@ Trips %>%
        x = "Time of The Day",
        y = "Density")
 ```
-  The graph above tells us more specific information about the days of the week and how 
+  The graph above tells us more specific information about each day of the week which allows us to determine which day shave the most casual and registered users respectively. I do not believe that one graph is better than the other, they both give different information that is useful to answer different questions. 
   
 ### Spatial patterns
 
@@ -271,7 +285,7 @@ Stations %>%
       ggplot(aes(x = long, y = lat, color = total_departures)) +
       geom_jitter() +
         labs(title = "Total Departures from Each Rental Location", 
-        x = "Longtitude", 
+        x = "Longitude", 
         y ="Latitude")
 ```
   
@@ -280,16 +294,17 @@ Stations %>%
 ```{r}
 Stations %>%
   left_join(Trips,
-  by = c("name" = "sstation")) %>%
-    group_by(client) %>% 
-    mutate(percent_casual= mean(client == "Casual")) %>% 
-      ggplot(aes(x = long, y = lat, color = percent_casual)) +
-      geom_jitter() +
-        labs(title = "Total Departures from Each Rental Location", 
-        x = "Longtitude", 
-        y ="Latitute")
+            by = c("name" = "sstation")) %>%
+  group_by(name, long, lat) %>% 
+  summarize(percent_casual= mean(client == "Casual")) %>% 
+  ggplot(aes(x = long, y = lat, color = percent_casual)) +
+  geom_point() +
+  labs(title = "Total Departures from Each Rental Location", 
+       x = "Longitude", 
+       y ="Latitute")
 ```
-  
+ There are many stations along the 38.9 latitude, which could be explained by the fact that this is a downtown area in the middle of a city, with metro and train stations located in this area. Furthermore, there seems to be a diagonal street from left top to bottom right with the amount of stations that fit into that pattern. Lastly, there seems to be a high percentage of casual riders at certain stations along the -77.05 longitude. Once again, this is possibly the center of the downtown area where casual riders rent out their bikes.
+
 ### Spatiotemporal patterns
 
   17. Make a table with the ten station-date combinations (e.g., 14th & V St., 2014-10-14) with the highest number of departures, sorted from most departures to fewest. Save this to a new dataset and print out the dataset. Hint: `as_date(sdate)` converts `sdate` from date-time format to date format. 
@@ -301,24 +316,38 @@ Top_Trips <- Trips %>%
   count() %>%
   arrange(desc(n)) %>%
   head(10)
-  Top_Trips
+Top_Trips
 ```
   
   18. Use a join operation to make a table with only those trips whose departures match those top ten station-date combinations from the previous part.
   
 ```{r}
-Top_Trips %>%
-  left_join(Trips, by = "sstation")
+Trips%>%
+  mutate(trip_date = as_date(sdate)) %>%
+  inner_join(Top_Trips, 
+            by = c("sstation", "trip_date"))
 ```
   
   19. Build on the code from the previous problem (ie. copy that code below and then %>% into the next step.) and group the trips by client type and day of the week (use the name, not the number). Find the proportion of trips by day within each client type (ie. the proportions for all 7 days within each client type add up to 1). Display your results so day of week is a column and there is a column for each client type. Interpret your results.
   
 ```{r}
-Top_Trips %>%
-  left_join(Trips, by = "sstation") %>%
-  mutate(day_of_week = wday(sdate, label = TRUE)) %>%
-  group_by(day_of_week, client) 
+Trips %>%
+  mutate(trip_date = as_date(sdate)) %>%
+  inner_join(Top_Trips,
+             by = c("sstation", "trip_date")) %>%
+  mutate(days_of_week = wday(sdate, label = TRUE)) %>%
+  group_by(client, days_of_week) %>%
+  summarize(number_riders = n()) %>%
+  mutate(total_prop = number_riders/sum(number_riders)) %>%
+  pivot_wider(id_cols = days_of_week,
+              names_from = client,
+              values_from = total_prop)
 ```
+
+At the ten station-date combinations with the highest number of departures, the  
+Casual = 36% on Sunday, 56% on Saturday
+
+ Make a table with the ten station-date combinations (e.g., 14th & V St., 2014-10-14) with the highest number of departures, sorted from most departures to fewest.
 
 **DID YOU REMEMBER TO GO BACK AND CHANGE THIS SET OF EXERCISES TO THE LARGER DATASET? IF NOT, DO THAT NOW.**
 
@@ -331,6 +360,34 @@ Top_Trips %>%
 This problem uses the data from the Tidy Tuesday competition this week, `kids`. If you need to refresh your memory on the data, read about it [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-15/readme.md). 
 
   21. In this exercise, you are going to try to replicate the graph below, created by Georgios Karamanis. I'm sure you can find the exact code on GitHub somewhere, but **DON'T DO THAT!** You will only be graded for putting an effort into this problem. So, give it a try and see how far you can get without doing too much googling. HINT: use `facet_geo()`. The graphic won't load below since it came from a location on my computer. So, you'll have to reference the original html on the moodle page to see it.
+  
+```{r}
+kids %>%
+  filter(variable == "lib") %>%
+  filter(year == 1997 | year == 2016) %>%
+  ggplot(aes(x = year, y = inf_adj_perchild)) +
+  geom_line() +
+  scale_color_identity() +
+  facet_geo(vars(state)) +
+  labs(title = "Change in public spending on libraries from 1997 to 2016",
+       subtitle = "Dollars spent per child, adjusted for inflation")
+```
+
+```{r}
+kids %>%
+  filter(variable %in% "lib") %>%
+  ggplot(aes(x = year, y = inf_adj_perchild)) +
+  geom_line(color = "white", size =2) +
+  theme(legend.position = "") +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "lightsteelblue4")) +
+  facet_geo(vars(state), grid = "us_state_grid3", label = "name") +
+  labs(title="Change in public spending on libraries",
+       subtitle = "Dollars spent per child, adjusted for inflation")+
+  theme(plot.title = element_text(hjust = 0.5, size =20, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5, size = 15))
+```
+
   
 
 **DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
