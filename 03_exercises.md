@@ -92,12 +92,8 @@ garden_summary <- garden_harvest %>%
 As shown above, there is a replication of certain vegetables and varieties. For example, in row 17 and 18, the beans(Bush Bush Slender variety) harvested on 2020-07-06 are reported as harvested in both plot M and D. However, in reality these vegetables and variaties have not been harvest twice. When Lisa collected her data, she didn't report the plot where she harvest from. Therefore, there is a replication of certain vegetables and varieties reported while that isn't accurate. This could be fixed if Lisa would report the plot in which each vegetable and variety is harvested. 
 
   3. I would like to understand how much money I "saved" by gardening, for each vegetable type. Describe how I could use the `garden_harvest` and `supply_cost` datasets, along with data from somewhere like [this](https://products.wholefoodsmarket.com/search?sort=relevance&store=10542) to answer this question. You can answer this in words, referencing various join functions. You don't need R code but could provide some if it's helpful.
- 
- With the information provided on the Whole Foods Market website, we will be able to create a new dataset that shows the price of each vegetable, we will call this data set `Whole_Foods`. This will allow us to then join the `Whole_Foods` dataset with the `supply_costs` dataset, in order to show the vegetable and price. The Whole Foods Market website only shows prices for its vegetables without tax, I would therefore only use the variable `price` in the `supply_costs` dataset which does not account for tax to create a fair comparison.
- 
- supply_costs %>%
-  left_join(Whole_Foods,
-            by = c("vegetable")
+            
+  First, we would have to determine the harvest yield for each vegetable by summarizing the vegetable data in garden_harvest. We could then find the price of each vegetable on the whole foods website. Next, we could left_join the supply_cost data set to garden_harvest by variety to determine the cost of the supplies for the garden. Finally, using this combined data set we could determine the price differential between the supplies for each vegetable and the retail price from whole foods. This would determine how much money was saved from growing your own crops.
 
   4. Subset the data to tomatoes. Reorder the tomato varieties from smallest to largest first harvest date. Create a barplot of total harvest in pounds for each variety, in the new order.
 
@@ -239,7 +235,7 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
-  As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals ren out these bikes to go from point A to point B during the workweek while they are off on the weekends and therefore don't need to rent out a bike. 
+  As shown in the bar graph above, bikes are rented out more during the weekdays than during the weekends. This could be explained by the fact that individuals rent out these bikes to go from point A to point B during the workweek while they are off on the weekends and therefore don't need to rent out a bike. 
   
   10. Facet your graph from exercise 8. by day of the week. Is there a pattern?
   
@@ -294,10 +290,7 @@ Trips %>%
 ```
 
 ![](03_exercises_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
-  I believe that geom_density() is better visualization than the geom_density(position = position_stack()) because from the graphs with position = position_stack()) we are unable to determine when each client type are more likely to rent out the bikes independently from each other. 
-  
-  First plot, we are able to compare the distributions to each other. How did the times they ride differ. 
-  Second plot, we are able to show what proportion of the rides does each category represent. Saturday early morning, we are able to tell from the second plot that it's mainly registered riders, while we are unable to tell this from the first plot.
+  I don't believe that one plot is better or worse than the other in telling the story because both plots provide different information. In the first plot, we are able to compare the distributions for both registered and casual clients. Furthermore, we are also able to observe how both clients differ in renting out a bike at different times. In the second plot, we are able to show what proportion of the rides is represented by the different type of client. For example, we are able to tell from the second plot that it's mainly registered clients that rent out bikes on Saturday morning, while we are unable to easily observe this in the first plot.
   
   13. Add a new variable to the dataset called `weekend` which will be "weekend" if the day is Saturday or Sunday and  "weekday" otherwise (HINT: use the `ifelse()` function and the `wday()` function from `lubridate`). Then, update the graph from the previous problem by faceting on the new `weekend` variable. 
   
@@ -435,12 +428,7 @@ Trips %>%
   </script>
 </div>
 
-At the ten station-date combinations with the highest number of departures, the  
-Casual = 36% on Sunday, 56% on Saturday
-
- Make a table with the ten station-date combinations (e.g., 14th & V St., 2014-10-14) with the highest number of departures, sorted from most departures to fewest.
-
-**DID YOU REMEMBER TO GO BACK AND CHANGE THIS SET OF EXERCISES TO THE LARGER DATASET? IF NOT, DO THAT NOW.**
+From the table above, we are able to conclude that at the ten station-date combinations with the highest number of departures, 56% of casual riders rent out a bike on Saturday and 36% of casual riders rent out a bike on Sunday. This shows that there is a very low percentage of casual riders that rent out a bike at these stations during the weekdays. In comparison, only 10% of registered riders rent out a bike on Saturday while only ~6% of registered riders rent out a bike on Sunday. Therefore, a much higher percentage of registered clients rents out a bike during the weekdays than casual clients. 
 
 ## GitHub link
 
@@ -451,29 +439,14 @@ Casual = 36% on Sunday, 56% on Saturday
 This problem uses the data from the Tidy Tuesday competition this week, `kids`. If you need to refresh your memory on the data, read about it [here](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-15/readme.md). 
 
   21. In this exercise, you are going to try to replicate the graph below, created by Georgios Karamanis. I'm sure you can find the exact code on GitHub somewhere, but **DON'T DO THAT!** You will only be graded for putting an effort into this problem. So, give it a try and see how far you can get without doing too much googling. HINT: use `facet_geo()`. The graphic won't load below since it came from a location on my computer. So, you'll have to reference the original html on the moodle page to see it.
-  
-
-```r
-kids %>%
-  filter(variable == "lib") %>%
-  filter(year == 1997 | year == 2016) %>%
-  ggplot(aes(x = year, y = inf_adj_perchild)) +
-  geom_line() +
-  scale_color_identity() +
-  facet_geo(vars(state)) +
-  labs(title = "Change in public spending on libraries from 1997 to 2016",
-       subtitle = "Dollars spent per child, adjusted for inflation")
-```
-
-![](03_exercises_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 
 ```r
 kids %>%
   filter(variable %in% "lib") %>%
   ggplot(aes(x = year, y = inf_adj_perchild)) +
-  geom_line(color = "white", size =2) +
-  theme(legend.position = "") +
+  geom_line(color = "white", size =0.5) +
+  theme(legend.position = "dodge") +
   theme_void() +
   theme(plot.background = element_rect(fill = "lightsteelblue4")) +
   facet_geo(vars(state), grid = "us_state_grid3", label = "name") +
@@ -483,8 +456,4 @@ kids %>%
         plot.subtitle = element_text(hjust = 0.5, size = 15))
 ```
 
-![](03_exercises_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
-
-  
-
-**DID YOU REMEMBER TO UNCOMMENT THE OPTIONS AT THE TOP?**
+![](03_exercises_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
